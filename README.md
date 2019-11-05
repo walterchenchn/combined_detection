@@ -17,8 +17,7 @@ $ source devel/setup.bash
 $ roslaunch usb_cam usb_cam-test.launch 
 ```
 ##### 1.1.2 内参标定
-准备一个已知尺寸的标定板，本实验使用的是8X6的棋盘标定板。由于标定过程使用的是棋盘内部的角点进行，所以实际上我们使用的是9X7的棋盘标定板。
-![标定板.jpeg](https://i.loli.net/2019/11/05/nswLf1Cvd9Qrx8a.png)
+准备一个已知尺寸的标定板，本实验使用的是8X6的棋盘标定板。由于标定过程使用的是棋盘内部的角点进行，所以实际上我们使用的是9X7的[棋盘标定板](https://i.loli.net/2019/11/05/nswLf1Cvd9Qrx8a.png)。
 安装相机标定依赖,并查看usb相机发布的话题
 ```
 $ rosdep install camera_calibration
@@ -33,17 +32,18 @@ $ rostopic list
 ```
 $ rosrun camera_calibration cameracalibrator.py --size 8x6 --square 0.108 image:=/usb_cam/image_raw camera:=/camera
 ```
---size:为当前标定板的大小;--square 0.108为每个棋盘格的边长(单位为米);image:=/usb_cam/image_raw标定当前订阅图像来源自名为/usb_cam/image_raw的topic;camera:=/camera为摄像机名;  
-出现的界面如下
-![biadoing.png](https://i.loli.net/2019/11/05/Q95bBaSjuXrhRyn.png)
-移动棋盘标定板
+1. --size:为当前标定板的大小;  
+2. --square 0.108为每个棋盘格的边长(单位为米);  
+3. image:=/usb_cam/image_raw标定当前订阅图像来源自名为/usb_cam/image_raw的topic;  
+4. camera:=/camera为摄像机名;  
+之后出现的界面如下
+![biadoing.png](https://i.loli.net/2019/11/05/Q95bBaSjuXrhRyn.png)  
 为了达到良好的标定效果，需要在摄像机周围移动标定板，并完成以下基本需求：  
-（1）移动标定板到画面的最左、右，最上、下方。  
-（2）移动标定板到视野的最近和最远处。  
-（3）移动标定板使其充满整个画面。  
+（1）移动标定板到画面的最左、右，最上、下方  
+（2）移动标定板到视野的最近和最远处  
+（3）移动标定板使其充满整个画面  
 （4）保持标定板倾斜状态并使其移动到画面的最左、右，最上、下方  
-当标定板移动到画面的最左、右方时，此时，窗口的x会达到最小或满值。同理，y指示标定板的在画面的上下位置，size表示标定板在视野中的距离。每次移动之后，请保持标定板不动直到窗口出现高亮提示。当calibration按钮亮起时，代表已经有足够的数据进行摄像头的标定，此时请按下calibration并等待一分钟左右  
-在标定完成后，终端会输出校正结果。如下所示
+当标定板移动到画面的最左、右方时，此时，窗口的x会达到最小或满值。同理，y指示标定板的在画面的上下位置，size表示标定板在视野中的距离。每次移动之后，请保持标定板不动直到窗口出现高亮提示。当calibration按钮亮起时，代表已经有足够的数据进行摄像头的标定，此时请按下calibration并等待一分钟左右.在标定完成后，终端会输出校正结果。如下所示,camera matrix即为相机内参
 ```
 [image]
 
@@ -73,7 +73,6 @@ projection
 0.000000 288.382446 222.988164 0.000000
 0.000000 0.000000 1.000000 0.000000
 ```
-camera matrix即为相机内参
 #### 1.2 相机与激光雷达外参标定
 ##### 1.2.1 安装Autoware
 联合标定需要使用Autoware,请按照[教程](https://www.jianshu.com/p/daa91bc28108)自行安装
@@ -128,8 +127,8 @@ DistModel: plumb_bob
 ```
 CameraExtrinsicMat即为相机与激光雷达外参矩阵,最后一行是补齐行,前3行4列才是有用的数据.前3行前3列表示外参旋转矩阵R,前3行第4列表示外参平移矩阵t
 #### 1.2 相机与激光雷达联合联合检测
-基本思想是使用YOLO v3检测相机图像上的车辆目标,然后通过外参矩阵将目标边界框投影至激光雷达坐标系下,如果有激光点云了进入目标边界框的范围,那么可以认为这些点云是车辆上的点,可以在RVIZ上显示出来.此程序需要下载[数据包](my.sharepoint.com/:u:/g/personal/chenhao2017_stu_hit_edu_cn/Ee99PM4AJaxPvItE-KA6iq4BJUKiKOMPneXT8UyFu3kN_g?e=C41X9x)
-##### 1.2.1
+基本思想是使用YOLO v3检测相机图像上的车辆目标,然后通过外参矩阵将目标边界框投影至激光雷达坐标系下,如果有激光点云了进入目标边界框的范围,那么可以认为这些点云是车辆上的点,可以在RVIZ上显示出来.此程序需要下载[数据包](https://stuhiteducn-my.sharepoint.com/:u:/g/personal/chenhao2017_stu_hit_edu_cn/Ee99PM4AJaxPvItE-KA6iq4BJUKiKOMPneXT8UyFu3kN_g?e=C41X9x)
+##### 1.2.1 修改程序外参矩阵
 ```
 $ cd combine_detect/src
 $ git clone https://github.com/walterchenchn/combined_detection.git
@@ -141,13 +140,13 @@ $ gedit combine.cpp
 ```
 1. 修改47行"外参,旋转矩阵R",将标定得到的外参矩阵CameraExtrinsicMat的旋转矩阵(即前三行三列)求逆矩阵,并写入;  
 2. 修改51行,将CameraExtrinsicMat的平移矩阵(即前三行第四列)求逆矩阵,并写入;  
-3. 修改49行,将CameraMat求逆矩阵,并写入.  
-然后进行程序编译
+3. 修改49行,将CameraMat求逆矩阵,并写入.然后进行程序编译
 ```
 $ cd ..
 $ catkin_make
 ```
-之后在打开相机和雷达的情况下,进行联合检测.首先需要下载深度学习网络[权重包](https://stuhiteducn-my.sharepoint.com/:u:/g/personal/chenhao2017_stu_hit_edu_cn/ETlas-Z4zvhCv-oJyoYkTWYBjjL1VKUefxGWUpXOc56ZhQ?e=7vKdXL),并放到/combined_detection/darknet_ros/darknet_ros/yolo_network_config/weights文件夹下
+##### 1.2.2 联合检测
+在打开相机和雷达的情况下,进行联合检测.首先需要下载深度学习网络[权重包](https://stuhiteducn-my.sharepoint.com/:u:/g/personal/chenhao2017_stu_hit_edu_cn/ETlas-Z4zvhCv-oJyoYkTWYBjjL1VKUefxGWUpXOc56ZhQ?e=7vKdXL),并放到/combined_detection/darknet_ros/darknet_ros/yolo_network_config/weights文件夹下
 ```
 $ source devel/setup.bash
 $ roslaunch darknet_ros darknet_ros.launch
